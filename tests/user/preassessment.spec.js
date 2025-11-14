@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Pre-Assessment Queueing", () => {
+test.describe.serial("Pre-Assessment Queueing", () => {
   test("Call next regular queue and forward it to the next step.", async ({ page }) => {
     //visit the page
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as priority user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -41,11 +41,11 @@ test.describe("Pre-Assessment Queueing", () => {
 
     await expect(page).toHaveURL(/login/);
 
-    await page.waitForTimeout(2000);
+    // await page.waitForTimeout(2000);
 
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -61,7 +61,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const inqueueClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${inqueueClient}, serving: ${serving}`);
+      // console.log(`Div ${i + 1}: ${inqueueClient}, serving: ${serving}`);
 
       if (inqueueClient.includes(serving)) {
         found = true;
@@ -70,6 +70,8 @@ test.describe("Pre-Assessment Queueing", () => {
     }
 
     expect(found).toBeTruthy();
+
+    await page.waitForTimeout(2000);
 
     //logout
     await page.locator('xpath=/html/body/div[1]/div/button').click();
@@ -84,7 +86,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login as priority user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -120,7 +122,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -136,7 +138,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const inqueueClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${inqueueClient}`);
+      // console.log(`Div ${i + 1}: ${inqueueClient}`);
 
       if (inqueueClient.includes(serving)) {
         found = true;
@@ -161,7 +163,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login as regular user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -251,12 +253,14 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
+
+    await page.waitForTimeout(2000);
 
     //look for the proceed skipped client was added to the next step
     const divs = page.locator('xpath=//*[@id="upcomingRegu"]/div');
@@ -265,7 +269,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
+      // console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
       if (proceededClient.includes(skipped2)) {
         found = true;
@@ -275,6 +279,13 @@ test.describe("Pre-Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
 
   test("Skip a serving priority queue, serve a skipped priority queue and proceed skipped queue to next step.", async ({ page }) => {
@@ -283,7 +294,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login as regular user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -372,14 +383,18 @@ test.describe("Pre-Assessment Queueing", () => {
 
     await expect(page).toHaveURL(/login/);
 
+    // await page.waitForTimeout(2000);
+
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
+
+    await page.waitForTimeout(2000);
 
     //look for the proceed skipped client was added to the next step
     const divs = page.locator('xpath=//*[@id="upcomingPrio"]/div');
@@ -388,7 +403,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
+      // console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
       if (proceededClient.includes(skipped2)) {
         found = true;
@@ -398,6 +413,13 @@ test.describe("Pre-Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
 
   test("Recall regular queue and forward to the next step.", async ({ page }) => {
@@ -406,7 +428,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login as priority user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -451,14 +473,18 @@ test.describe("Pre-Assessment Queueing", () => {
 
     await expect(page.url()).toContain("/auth/login");
 
+    await page.waitForTimeout(2000);
+
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
+
+    await page.waitForTimeout(2000);
 
     //look for the proceed skipped client was added to the next step
     const divs = page.locator('xpath=//*[@id="upcomingRegu"]/div');
@@ -467,7 +493,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${recalled}`);
+      // console.log(`Div ${i + 1}: ${proceededClient}, ${recalled}`);
 
       if (proceededClient.includes(recalled)) {
         found = true;
@@ -477,6 +503,13 @@ test.describe("Pre-Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
   
   test("Recall priority queue and forward to the next step.", async ({ page }) => {
@@ -485,7 +518,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login as priority user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -532,7 +565,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -548,7 +581,7 @@ test.describe("Pre-Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${recalled}`);
+      // console.log(`Div ${i + 1}: ${proceededClient}, ${recalled}`);
 
       if (proceededClient.includes(recalled)) {
         found = true;
@@ -557,6 +590,14 @@ test.describe("Pre-Assessment Queueing", () => {
     }
 
     expect(found).toBeTruthy();
+
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
 
   // test("Defer regular queue.", async ({ page }) => {

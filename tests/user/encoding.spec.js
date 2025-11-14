@@ -7,7 +7,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for regular lane
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -43,11 +43,11 @@ test.describe.serial("Encoding Queueing", () => {
 
     await expect(page).toHaveURL(/login/);
 
-    await page.waitForTimeout(2000);
+    // await page.waitForTimeout(2000);
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -73,6 +73,8 @@ test.describe.serial("Encoding Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
     //logout
     await page.locator('xpath=/html/body/div[1]/div/button').click();
     await page.getByRole("link", { name: "Logout" }).click();
@@ -86,7 +88,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for priority lane
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -124,7 +126,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -165,7 +167,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for regular lane
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -255,7 +257,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.waitForTimeout(2000);
@@ -281,6 +283,14 @@ test.describe.serial("Encoding Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
+
   });
 
   test("Skip a serving priority queue, serve a skipped priority queue and proceed skipped queue to next step.", async ({ page }) => {
@@ -289,7 +299,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for priority lane
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -378,7 +388,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -404,6 +414,14 @@ test.describe.serial("Encoding Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
+
   });
 
   test("Recall regular queue and forward to the next step.", async ({ page }) => {
@@ -412,7 +430,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for regular lane
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -466,7 +484,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -492,6 +510,14 @@ test.describe.serial("Encoding Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
+
   });
   
   test("Recall priority queue and forward to the next step.", async ({ page }) => {
@@ -500,7 +526,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login as encoding/step 2 user for priority lane
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -554,7 +580,7 @@ test.describe.serial("Encoding Queueing", () => {
 
     //login step 3 user
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
@@ -579,6 +605,14 @@ test.describe.serial("Encoding Queueing", () => {
     }
 
     expect(found).toBeTruthy();
+
+    await page.waitForTimeout(2000);
+
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
 
   // test("Defer regular queue.", async ({ page }) => {

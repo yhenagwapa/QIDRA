@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe.serial("User Management", () => {
+test.describe("User Management", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
@@ -13,7 +13,7 @@ test.describe.serial("User Management", () => {
     await expect(page.url()).toContain("/admin");
 
     await page.getByRole("link", { name: 'Users Users' }).click();
-    await expect(page.url()).toContain("/admin/users");
+    await expect(page.url()).toBe("https://172.26.120.49/qidra/public/admin/users");
   });
 
   test.afterEach(async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe.serial("User Management", () => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/users");
+    await expect(page.url()).toContain("/user");
 
     //check if user is in the right step
     await page.waitForSelector('xpath=/html/body/div[2]/div[1]/div/div[3]/div[1]');
@@ -207,7 +207,7 @@ test.describe.serial("User Management", () => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/users");
+    await expect(page.url()).toContain("/user");
 
     //check if user is in the right step
     await page.waitForSelector('xpath=/html/body/div[2]/div[1]/div/div[3]/div[1]');

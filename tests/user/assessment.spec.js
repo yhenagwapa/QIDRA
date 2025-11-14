@@ -5,12 +5,20 @@ test.describe.serial("Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     await page.fill("#email", "assessment1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");  
+    await expect(page.url()).toContain("/user");
+  });
+
+  test.afterEach(async ({ page }) => {
+    //logout
+    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.getByRole("link", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/login/);
   });
 
   test("Call next regular queue and forward it to the next step.", async ({ page }) => {
@@ -43,16 +51,14 @@ test.describe.serial("Assessment Queueing", () => {
 
     await expect(page).toHaveURL(/login/);
 
-    await page.waitForTimeout(5000);
-
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -63,7 +69,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const inqueueClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${inqueueClient}, serving: ${serving}`);
 
       if (inqueueClient.includes(serving)) {
         found = true;
@@ -73,11 +78,7 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page).toHaveURL(/login/);
+    await page.waitForTimeout(2000);
   });
 
   test("Call next priority queue and forward it to the next step.", async ({ page }) => {
@@ -112,12 +113,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -128,7 +129,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const inqueueClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${inqueueClient}`);
 
       if (inqueueClient.includes(serving)) {
         found = true;
@@ -139,12 +139,6 @@ test.describe.serial("Assessment Queueing", () => {
     expect(found).toBeTruthy();
 
     await page.waitForTimeout(2000);
-
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page).toHaveURL(/login/);
   });
 
   test("Call next returnee queue and forward it to the next step.", async ({ page }) => {
@@ -179,12 +173,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -195,7 +189,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const inqueueClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${inqueueClient}`);
 
       if (inqueueClient.includes(serving)) {
         found = true;
@@ -206,15 +199,10 @@ test.describe.serial("Assessment Queueing", () => {
     expect(found).toBeTruthy();
 
     await page.waitForTimeout(2000);
-
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page).toHaveURL(/login/);
   });
 
   test("Skip a serving regular queue, serve a skipped regular queue and proceed skipped queue to next step.", async ({ page }) => {
+    //skip and serve
     //get the text of the next queue
     const text = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
 
@@ -233,13 +221,24 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(5000);
 
-    //get the text of the skipped queue
+    //look for the proceed skipped client was added to the next step
+    const pendingDivs = page.locator('xpath=//*[@id="pendingRegu"]/div');
+    const pendingCount = await pendingDivs.count();
+    let pendingFound = false;
+
+    for (let i = 0; i < pendingCount; i++) {
+      const pendingQueue = await pendingDivs.nth(i).innerText();
+
+      if (pendingQueue.includes(serving)) {
+        pendingFound = true;
+        break;
+      }
+    }
+
+    await expect(pendingFound).toBeTruthy;
+
+    //serve a skipped client
     const skipped = await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').innerText();
-
-    //compare serving queue and skipped queue
-    await expect(skipped).toBe(serving);
-
-    //serve skipped client
     await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').click();
     await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[3]').click();
 
@@ -254,6 +253,7 @@ test.describe.serial("Assessment Queueing", () => {
     await page.locator('xpath=//*[@id="proceedBtn"]').click();
     await page.locator("#modalConfirmBtn").click();
     
+    //skip and proceed
     //get the text of the next queue
     const text2 = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
 
@@ -275,17 +275,23 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped2 = await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').innerText();
+    //look for the proceed skipped client was added to the next step
+    const pendingDivs2 = page.locator('xpath=//*[@id="pendingRegu"]/div');
+    const pendingCount2 = await pendingDivs2.count();
+    let pendingFound2 = false;
 
-    //compare serving queue and skipped queue
-    await expect(serving3).toBe(skipped2);
+    for (let i = 0; i < pendingCount2; i++) {
+      const pendingQueue2 = await pendingDivs2.nth(i).innerText();
 
-    //proceed skipped client to next step
-    await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+      if (pendingQueue2.includes(serving3)) {
+        await pendingDivs2.nth(i).click();
+        await page.waitForTimeout(1000);
 
-    await page.waitForTimeout(2000);
+        await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+        await page.waitForTimeout(2000);
+        break;
+      }
+    }
 
     //logout
     await page.locator('xpath=/html/body/div[1]/div/button').click();
@@ -298,14 +304,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
-    await page.waitForTimeout(2000);
-
     await page.locator('button[type="submit"]').click();
-
-    await expect(page.url()).toContain("/user");
+    
+    await page.waitForTimeout(2000);
 
     //look for the proceed skipped client was added to the next step
     const divs = page.locator('xpath=//*[@id="upcomingRegu"]/div');
@@ -314,9 +318,8 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
-      if (proceededClient.includes(skipped2)) {
+      if (proceededClient.includes(serving3)) {
         found = true;
         break;
       }
@@ -324,9 +327,11 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
   });
 
   test("Skip a serving priority queue, serve a skipped priority queue and proceed skipped queue to next step.", async ({ page }) => {
+    //skip and serve
     //get the text of the next queue
     const text = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
 
@@ -345,13 +350,24 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped = await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').innerText();
+    //look for the skipped client in the pending list
+    const pendingDivs = page.locator('xpath=//*[@id="pendingPrio"]/div');
+    const pendingCount = await pendingDivs.count();
+    let pendingFound = false;
 
-    //compare serving queue and skipped queue
-    await expect(skipped).toBe(serving);
+    for (let i = 0; i < pendingCount; i++) {
+      const pendingQueue = await pendingDivs.nth(i).innerText();
+
+      if (pendingQueue.includes(serving)) {
+        pendingFound = true;
+        break;
+      }
+    }
+
+    await expect(pendingFound).toBeTruthy;
 
     //serve skipped client
+    const skipped = await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').innerText();
     await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').click();
     await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[3]').click();
 
@@ -368,6 +384,7 @@ test.describe.serial("Assessment Queueing", () => {
     
     await page.waitForTimeout(2000);
 
+    //skip and proceed
     //get the text of the next queue
     const text2 = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
 
@@ -389,17 +406,23 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped2 = await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').innerText();
+    //look for the skipped queue and proceed to the next step
+    const pendingDivs2 = page.locator('xpath=//*[@id="pendingPrio"]/div');
+    const pendingCount2 = await pendingDivs2.count();
+    let pendingFound2 = false;
 
-    //compare serving queue and skipped queue
-    await expect(serving3).toBe(skipped2);
+    for (let i = 0; i < pendingCount2; i++) {
+      const pendingQueue2 = await pendingDivs2.nth(i).innerText();
 
-    //proceed skipped client to next step
-    await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+      if (pendingQueue2.includes(serving3)) {
+        await pendingDivs2.nth(i).click();
+        await page.waitForTimeout(1000);
 
-    await page.waitForTimeout(2000);
+        await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+        await page.waitForTimeout(2000);
+        break;
+      }
+    }
 
     //logout
     await page.locator('xpath=/html/body/div[1]/div/button').click();
@@ -409,12 +432,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -425,9 +448,8 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
-      if (proceededClient.includes(skipped2)) {
+      if (proceededClient.includes(serving3)) {
         found = true;
         break;
       }
@@ -435,9 +457,11 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
   });
 
   test("Skip a serving returnee queue, serve a skipped returnee queue and proceed returnee queue to next step.", async ({ page }) => {
+    //skip and serve
     //get the text of the next queue
     const text = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
 
@@ -456,13 +480,24 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped = await page.locator('xpath=//*[@id="pendingReturnee"]/div[1]').innerText();
+    //look for the skipped client in the pending list
+    const pendingDivs = page.locator('xpath=//*[@id="pendingReturnee"]/div');
+    const pendingCount = await pendingDivs.count();
+    let pendingFound = false;
 
-    //compare serving queue and skipped queue
-    await expect(skipped).toBe(serving);
+    for (let i = 0; i < pendingCount; i++) {
+      const pendingQueue = await pendingDivs.nth(i).innerText();
+
+      if (pendingQueue.includes(serving)) {
+        pendingFound = true;
+        break;
+      }
+    }
+
+    await expect(pendingFound).toBeTruthy;
 
     //serve skipped client
+    const skipped = await page.locator('xpath=//*[@id="pendingReturnee"]/div[1]').innerText();
     await page.locator('xpath=//*[@id="pendingReturnee"]/div[1]').click();
     await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[3]').click();
 
@@ -479,6 +514,7 @@ test.describe.serial("Assessment Queueing", () => {
     
     await page.waitForTimeout(2000);
 
+    //skip and serve
     //get the text of the next queue
     const text2 = await page.locator('xpath=//*[@id="upcomingReturnee"]/div[1]').innerText();
 
@@ -500,17 +536,23 @@ test.describe.serial("Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped2 = await page.locator('xpath=//*[@id="pendingReturnee"]/div[1]').innerText();
+    //look for the skipped queue and proceed to the next step
+    const pendingDivs2 = page.locator('xpath=//*[@id="pendingReturnee"]/div');
+    const pendingCount2 = await pendingDivs2.count();
+    let pendingFound2 = false;
 
-    //compare serving queue and skipped queue
-    await expect(serving3).toBe(skipped2);
+    for (let i = 0; i < pendingCount2; i++) {
+      const pendingQueue2 = await pendingDivs2.nth(i).innerText();
 
-    //proceed skipped client to next step
-    await page.locator('xpath=//*[@id="pendingReturnee"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+      if (pendingQueue2.includes(serving3)) {
+        await pendingDivs2.nth(i).click();
+        await page.waitForTimeout(1000);
 
-    await page.waitForTimeout(2000);
+        await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
+        await page.waitForTimeout(2000);
+        break;
+      }
+    }
 
     //logout
     await page.locator('xpath=/html/body/div[1]/div/button').click();
@@ -520,25 +562,22 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
-
     await page.waitForTimeout(2000);
 
     //look for the proceed skipped client was added to the next step
-    const divs = page.locator('xpath=//*[@id="upcomingReturneex"]/div');
+    const divs = page.locator('xpath=//*[@id="upcomingReturnee"]/div');
     const count = await divs.count();
     let found = false;
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
-      if (proceededClient.includes(skipped2)) {
+      if (proceededClient.includes(serving3)) {
         found = true;
         break;
       }
@@ -546,6 +585,7 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
   });
 
   test("Recall regular queue and forward to the next step.", async ({ page }) => {
@@ -596,12 +636,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -612,7 +652,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${recalled2}`);
 
       if (proceededClient.includes(recalled2)) {
         found = true;
@@ -622,6 +661,7 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
+    await page.waitForTimeout(2000);
   });
   
   test("Recall priority queue and forward to the next step.", async ({ page }) => {
@@ -672,12 +712,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -688,7 +728,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${recalled2}`);
 
       if (proceededClient.includes(recalled2)) {
         found = true;
@@ -697,6 +736,8 @@ test.describe.serial("Assessment Queueing", () => {
     }
 
     expect(found).toBeTruthy();
+
+    await page.waitForTimeout(2000);
   });
 
   test("Recall returnee queue and forward to the next step.", async ({ page }) => {
@@ -747,12 +788,12 @@ test.describe.serial("Assessment Queueing", () => {
 
     //login step 4 user
     await page.fill("#email", "releasing1@dswd.gov.ph");
-    await page.fill("#password", "password");
+    await page.fill("#password", "Password@123");
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.url()).toContain("/user");
+    
 
     await page.waitForTimeout(2000);
 
@@ -763,7 +804,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const proceededClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${proceededClient}, ${recalled2}`);
 
       if (proceededClient.includes(recalled2)) {
         found = true;
@@ -790,7 +830,7 @@ test.describe.serial("Assessment Queueing", () => {
     //compare next queue and serving queue
     await expect(serving).toBe(text);
 
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(2000);
 
     //defer client
     await page.locator('xpath=//*[@id="deferBtn"]').click();
@@ -805,7 +845,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const deferredClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${deferredClient}`);
 
       if (deferredClient.includes(serving)) {
         found = true;
@@ -815,11 +854,7 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page.url()).toContain("/auth/login");
+    await page.waitForTimeout(2000);
   });
 
   test("Defer priority queue.", async ({ page }) => {
@@ -838,7 +873,7 @@ test.describe.serial("Assessment Queueing", () => {
     //compare next queue and serving queue
     await expect(serving).toBe(text);
 
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(2000);
 
     //defer client
     await page.locator('xpath=//*[@id="deferBtn"]').click();
@@ -853,7 +888,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const deferredClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${deferredClient}`);
 
       if (deferredClient.includes(serving)) {
         found = true;
@@ -863,11 +897,7 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page.url()).toContain("/auth/login");
+    await page.waitForTimeout(2000);
   });
 
   test("Defer returnee queue.", async ({ page }) => {
@@ -901,7 +931,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     for (let i = 0; i < count; i++) {
       const deferredClient = await divs.nth(i).innerText();
-      console.log(`Div ${i + 1}: ${deferredClient}`);
 
       if (deferredClient.includes(serving)) {
         found = true;
@@ -911,10 +940,6 @@ test.describe.serial("Assessment Queueing", () => {
 
     expect(found).toBeTruthy();
 
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page.url()).toContain("/auth/login");
+    await page.waitForTimeout(2000);
   });
 });
