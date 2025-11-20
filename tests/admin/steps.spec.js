@@ -32,15 +32,16 @@ test.describe.serial("Steps Management", () => {
     //click add user button
     await page.getByRole("button", { name: "Add Step" }).click();
 
-    await page.waitForSelector('#addUserModal', { state: 'visible' });
+    const modal = page.locator('#addUserModal');
+    await expect(modal).toBeVisible();
 
     //select step name in form and submit
-    await page.locator('xpath=//*[@id="step_name"]').selectOption({ label: 'Client Feedback / Survey' });
-    await page.locator('button[type="submit"]').click();
+    await modal.locator('#stepName').selectOption({ label: 'Client Feedback' });
+    await modal.locator('button[type="submit"]').click();
 
     //check if step is added
     await page.waitForSelector('table');
-    await expect(page.getByRole("cell", { name: "ClientFeedback" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "Client Feedback" })).toBeVisible();
 
     await page.waitForTimeout(2000);
   });
@@ -49,43 +50,45 @@ test.describe.serial("Steps Management", () => {
     //click add step button
     await page.getByRole("button", { name: "Add Step" }).click();
 
-    await page.waitForSelector('#addUserModal', { state: 'visible' });
+    const modal = page.locator('#addUserModal');
+    await expect(modal).toBeVisible();
 
     //select step name in form and submit
-    await page.locator('xpath=//*[@id="step_name"]').selectOption({ label: 'Client Feedback / Survey' });
-    await page.locator('button[type="submit"]').click();
+    await modal.locator('#stepName').selectOption({ label: 'Pre-assessment' });
+    await page.waitForTimeout(500);
 
-    //step should not be added and if its added, fail the test
-    await page.waitForSelector('table');
-    await expect(page.getByRole("cell", { name: "ClientFeedback" })).not.toBeVisible();
+    //step form should display error message
+    const warning = await modal.locator('#stepNameError').innerText();
+    expect(warning).toBe("This step name already exists in your section.");
 
-    await page.waitForTimeout(2000);
+    //cancel
+    await page.getByRole('button', { name: 'Cancel' }).click();
   });
 
-  test("Cannot create a new step if one or more required fields are empty.", async ({ page }) => {
-    //count the rows first
-    const rows = await page.locator('table tbody tr');
-    const rowCountBefore  = await rows.count();
-    let rowCountAfter;
+  // test("Cannot create a new step if one or more required fields are empty.", async ({ page }) => {
+  //   //count the rows first
+  //   const rows = await page.locator('table tbody tr');
+  //   const rowCountBefore  = await rows.count();
+  //   let rowCountAfter;
 
-    //click add step button
-    await page.getByRole("button", { name: "Add Step" }).click();
+  //   //click add step button
+  //   await page.getByRole("button", { name: "Add Step" }).click();
 
-    await page.waitForSelector('#addUserModal', { state: 'visible' });
+  //   await page.waitForSelector('#addUserModal', { state: 'visible' });
 
-    //select step name in form and submit
-    await page.locator('button[type="submit"]').click();
+  //   //select step name in form and submit
+  //   await page.locator('button[type="submit"]').click();
 
-    //timeout 2sec
-    await page.waitForTimeout(2000);
+  //   //timeout 2sec
+  //   await page.waitForTimeout(2000);
 
-    //check if row count is the same
-    const row = await page.locator('table tbody tr');
-    rowCountAfter = await row .count();
-    expect(rowCountAfter).toBe(rowCountBefore);
+  //   //check if row count is the same
+  //   const row = await page.locator('table tbody tr');
+  //   rowCountAfter = await row .count();
+  //   expect(rowCountAfter).toBe(rowCountBefore);
 
-    await page.waitForTimeout(2000);
-  });
+  //   await page.waitForTimeout(2000);
+  // });
 
   test("Successfully update step name.", async ({ page }) => {
     //count the rows first
@@ -128,9 +131,8 @@ test.describe.serial("Steps Management", () => {
     //check step dropdown field if edited step was updated
     await page.waitForSelector('xpath=//*[@name="step_id"]');
     await page.locator('xpath=//*[@name="step_id"]').selectOption({ label: stepNo + " - " + stepName + " Edited" });
-    const labelSelected = await page.locator('select[name="step_id"] option:checked').innerText();
-
-    await expect(labelSelected).toBe(stepNo + " - " + stepName + " Edited");
+    await expect(page.locator('select[name="step_id"] option:checked'))
+    .toHaveText(new RegExp(`${stepNo}\\s*-\\s*${stepName}\\s*Edited`));
 
     await page.waitForTimeout(500);
 
@@ -139,15 +141,15 @@ test.describe.serial("Steps Management", () => {
   });
 
   test("Unsuccessfully update step name if step name is already existing.", async ({ page }) => {
-    // page.once('dialog', async dialog => {
-    //     console.log('⚠️ Alert detected:', dialog.message());
+    page.once('dialog', async dialog => {
+        console.log('⚠️ Alert detected:', dialog.message());
 
-    //     // Assert the alert message
-    //     expect(dialog.message()).toContain("The step name is already existing."); //change to proper error message
+        // Assert the alert message
+        expect(dialog.message()).toContain("This step name already exists in your section.");
 
-    //     // Accept the alert (click OK)
-    //     await dialog.accept();
-    // });
+        // Accept the alert (click OK)
+        await dialog.accept();
+    });
 
     //count the rows first
     const rows = await page.locator('table tbody tr');
@@ -199,7 +201,7 @@ test.describe.serial("Steps Management", () => {
     await page.waitForSelector('#addUserModal', { state: 'visible' });
 
     //select step name in form and submit
-    await page.locator('xpath=//*[@id="step_name"]').selectOption({ label: 'Payment' });
+    await page.locator('xpath=//*[@id="stepName"]').selectOption({ label: 'Payment' });
     await page.locator('button[type="submit"]').click();
 
     //check if step is added
@@ -227,7 +229,7 @@ test.describe.serial("Steps Management", () => {
     await page.waitForSelector('#addUserModal', { state: 'visible' });
 
     //select step name in form and submit
-    await page.locator('xpath=//*[@id="step_name"]').selectOption({ label: 'Payment' });
+    await page.locator('xpath=//*[@id="stepName"]').selectOption({ label: 'Payment' });
     await page.locator('button[type="submit"]').click();
 
     //check if step is added

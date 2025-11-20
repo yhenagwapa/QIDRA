@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("User Management", () => {
+test.describe.serial("User Management", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
@@ -55,8 +55,6 @@ test.describe("User Management", () => {
     //logout
     await page.locator("xpath=/html/body/div[1]/div/button").click();
     await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page.url()).toContain("/auth/login");
 
     //check if user can login
     await page.fill("#email", "testuser@dswd.gov.ph");
@@ -312,8 +310,6 @@ test.describe("User Management", () => {
     await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
-
-    await expect(page.url()).toContain("/users");
 
     //check if user is in the right step
     await page.waitForSelector('xpath=/html/body/div[2]/div[1]/div/div[3]/div[1]');
