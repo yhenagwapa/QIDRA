@@ -5,9 +5,8 @@ test.describe.serial("Windows Management", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
-    await page.fill("#email", "cisadmin@dswd.gov.ph");
+    await page.fill("#email", "yvvillamil@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 

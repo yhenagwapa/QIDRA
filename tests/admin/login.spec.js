@@ -4,15 +4,14 @@ test("has title", async ({ page }) => {
   await page.goto("https://172.26.120.49/qidra/public/");
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Qidra/);
+  await expect(page).toHaveTitle(/QIDRA/);
 });
 
 test("Login using a registered account and logout.", async ({ page }) => {
   await page.goto("https://172.26.120.49/qidra/public/");
 
-  await page.fill("#email", "cisadmin@dswd.gov.ph");
+  await page.fill("#email", "yvvillamil@dswd.gov.ph");
   await page.fill("#password", "Password@123");
-  await page.getByLabel("I agree to the Terms and Conditions.").check();
 
   await page.locator('button[type="submit"]').click();
 
@@ -30,7 +29,6 @@ test("Login using an unregistered account.", async ({ page }) => {
 
   await page.fill("#email", "cis_admin@dswd.gov.ph");
   await page.fill("#password", "testpassword");
-  await page.getByLabel("I agree to the Terms and Conditions.").check();
 
   await page.locator('button[type="submit"]').click();
 
@@ -42,8 +40,7 @@ test("Login using an unregistered account.", async ({ page }) => {
 test("Leaves one or more required fields empty.", async ({ page }) => {
   await page.goto("https://172.26.120.49/qidra/public/");
 
-  await page.fill("#email", "cisadmin@dswd.gov.ph");
-  await page.getByLabel("I agree to the Terms and Conditions.").check();
+  await page.fill("#email", "yvvillamil@dswd.gov.ph");
   await page.locator('button[type="submit"]').click();
 
   const pass = page.locator('input[name="password"]');
@@ -54,7 +51,6 @@ test("Leaves one or more required fields empty.", async ({ page }) => {
 
   await page.fill("#email", "");
   await page.fill("#password", "Password@123");
-  await page.getByLabel("I agree to the Terms and Conditions.").check();
   await page.locator('button[type="submit"]').click();
 
   const email = page.locator('input[name="email"]');
@@ -67,7 +63,6 @@ test("Leaves one or more required fields empty.", async ({ page }) => {
 test("Leaves both email and password empty.", async ({ page }) => {
   await page.goto("https://172.26.120.49/qidra/public/");
 
-  await page.getByLabel("I agree to the Terms and Conditions.").check();
   await page.locator('button[type="submit"]').click();
 
   const email = page.locator('input[name="email"]');
@@ -77,16 +72,16 @@ test("Leaves both email and password empty.", async ({ page }) => {
   expect(emailmsg).toBe("Please fill out this field.");
 });
 
-test("Leaves terms and condition unchecked.", async ({ page }) => {
-  await page.goto("https://172.26.120.49/qidra/public/");
+// test("Leaves terms and condition unchecked.", async ({ page }) => {
+//   await page.goto("https://172.26.120.49/qidra/public/");
 
-  await page.fill("#email", "cisadmin@dswd.gov.ph");
-  await page.fill("#password", "Password@123");
-  await page.locator('button[type="submit"]').click();
+//   await page.fill("#email", "yvvillamil@dswd.gov.ph");
+//   await page.fill("#password", "Password@123");
+//   await page.locator('button[type="submit"]').click();
 
-  const terms = page.locator('input[name="terms"]');
-  const termsmsg = await terms.evaluate(
-    (el, HTMLInputElement) => el.validationMessage
-  );
-  expect(termsmsg).toBe("Please check this box if you want to proceed.");
-});
+//   const terms = page.locator('input[name="terms"]');
+//   const termsmsg = await terms.evaluate(
+//     (el, HTMLInputElement) => el.validationMessage
+//   );
+//   expect(termsmsg).toBe("Please check this box if you want to proceed.");
+// });

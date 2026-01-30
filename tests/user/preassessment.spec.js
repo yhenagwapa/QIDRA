@@ -8,7 +8,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as priority user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -46,7 +45,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -87,7 +85,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as priority user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -123,7 +120,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -164,7 +160,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as regular user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -254,7 +249,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -295,7 +289,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as regular user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -388,7 +381,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -429,7 +421,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as priority user
     await page.fill("#email", "preassessregu@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -478,7 +469,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingregu1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -519,7 +509,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login as priority user
     await page.fill("#email", "preassessprio@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -566,7 +555,6 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     //login step 2 user
     await page.fill("#email", "encodingprio1@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -607,7 +595,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
   //   //login as priority user
   //   await page.fill("#email", "preassessregu@dswd.gov.ph");
   //   await page.fill("#password", "password");
-  //   await page.getByLabel("I agree to the Terms and Conditions.").check();
+  //
 
   //   await page.locator('button[type="submit"]').click();
 
@@ -667,7 +655,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
   //   //login as priority user
   //   await page.fill("#email", "preassessprio@dswd.gov.ph");
   //   await page.fill("#password", "password");
-  //   await page.getByLabel("I agree to the Terms and Conditions.").check();
+  //
 
   //   await page.locator('button[type="submit"]').click();
 

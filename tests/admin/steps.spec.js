@@ -4,9 +4,8 @@ test.describe.serial("Steps Management", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
-    await page.fill("#email", "cisadmin@dswd.gov.ph");
+    await page.fill("#email", "yvvillamil@dswd.gov.ph");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.locator('button[type="submit"]').click();
 
@@ -119,14 +118,14 @@ test.describe.serial("Steps Management", () => {
     await page.waitForSelector('table');
     await expect(page.getByRole("cell", { name: stepName + " Edited" })).toBeVisible();
 
-    //check if step name was updated in the add user modal
+    //check if step name was updated in the add window modal
     //go to user page
-    await page.getByRole("link", { name: 'Users Users' }).click();
+    await page.getByRole("link", { name: 'Users Windows' }).click();
 
-    //click add user button
-    await page.getByRole("button", { name: "Add User" }).click();
+    //click add window button
+    await page.getByRole("button", { name: "Add Window" }).click();
 
-    await page.waitForSelector('#addUserModal', { state: 'visible' });
+    await page.waitForSelector('#addWindowModal', { state: 'visible' });
 
     //check step dropdown field if edited step was updated
     await page.waitForSelector('xpath=//*[@name="step_id"]');
