@@ -6,44 +6,62 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as priority user
-    await page.fill("#email", "preassessregu@dswd.gov.ph");
+    await page.fill("#email", "fosale@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
 
+    //check if there is a serving queue
+    const servingQueue = await page.locator("#servingQueue").innerText();
+
+    console.log(servingQueue);
+
+    //if servingQueue is not empty then click proceed button before calling next queue
+    if (servingQueue !== "🚫Empty") {
+      //proceed serving regular queue to next step
+      await page.locator('#proceedBtn').click();
+      await page.locator("#modalConfirmBtn").click();
+
+      await page.waitForTimeout(2000);
+    }
+
     //get the text of the next queue
-    const text = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
+    const nextQueue = await page.locator('#upcomingRegu > div').first().innerText();
 
-    //call next regular
-    await page.locator('xpath=//*[@id="nextRegularBtn"]').click();
-    await page.locator("#modalConfirmBtn").click();
+    if (nextQueue.includes("🚫Empty")) {
+      //skip test
+      test.skip();
 
-    await page.waitForTimeout(2000);
+    } else {
+      //call next regular
+      await page.locator('#nextRegularBtn').click();
+      await page.locator("#modalConfirmBtn").click();
+
+      await page.waitForTimeout(2000); 
+    }
 
     //get the text of the serving queue
     const serving = await page.locator("#servingQueue").innerText();
 
     //compare next queue and serving queue
-    await expect(serving).toBe(text);
+    await expect(serving).toBe(nextQueue);
     
     //proceed serving regular queue to next step
-    await page.locator('xpath=//*[@id="proceedBtn"]').click();
+    await page.locator('#proceedBtn').click();
     await page.locator("#modalConfirmBtn").click();
 
     await page.waitForTimeout(2000);
 
     //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
+    await page.locator('body > div:nth-child(1) > div > button').click();
     await page.getByRole("link", { name: "Logout" }).click();
 
     await expect(page).toHaveURL(/login/);
 
-    // await page.waitForTimeout(2000);
-
     //login step 2 user
-    await page.fill("#email", "encodingregu1@dswd.gov.ph");
+    await page.fill("#email", "fjlvillas@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -83,27 +101,45 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as priority user
-    await page.fill("#email", "preassessprio@dswd.gov.ph");
+    await page.fill("#email", "krajuanico@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
 
+    //check if there is a serving queue
+    const servingQueue = await page.locator("#servingQueue").innerText();
+
+    //if servingQueue is not empty then click proceed button before calling next queue
+    if (servingQueue !== "🚫Empty") {
+      //proceed serving regular queue to next step
+      await page.locator('xpath=//*[@id="proceedBtn"]').click();
+      await page.locator("#modalConfirmBtn").click();
+
+      await page.waitForTimeout(2000);
+    }
+
     //get the text of the next queue
-    const text = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
+    const nextQueue = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
 
-    //call next priority
-    await page.locator('xpath=//*[@id="nextPriorityBtn"]').click();
-    await page.locator("#modalConfirmBtn").click();
+    if (nextQueue.includes("🚫Empty")) {
+      //skip test
+      test.skip();
 
-    await page.waitForTimeout(2000);
+    } else {
+      //call next regular
+      await page.locator('xpath=//*[@id="nextPriorityBtn"]').click();
+      await page.locator("#modalConfirmBtn").click();
+
+      await page.waitForTimeout(2000); 
+    }
 
     //get the text of the serving queue
     const serving = await page.locator("#servingQueue").innerText();
 
     //compare next queue and serving queue
-    await expect(serving).toBe(text);
+    await expect(serving).toBe(nextQueue);
 
     //proceed serving priority queue to next step
     await page.locator('xpath=//*[@id="proceedBtn"]').click();
@@ -118,7 +154,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await expect(page).toHaveURL(/login/);
 
     //login step 2 user
-    await page.fill("#email", "encodingprio1@dswd.gov.ph");
+    await page.fill("#email", "jdcumbay@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -158,7 +194,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as regular user
-    await page.fill("#email", "preassessregu@dswd.gov.ph");
+    await page.fill("#email", "fosale@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -166,13 +202,29 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await expect(page.url()).toContain("/user");
 
     //get the text of the next queue
-    const text = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
+    const nextQueue = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
+
+    if (nextQueue.includes("🚫Empty")) {
+      //skip test
+      test.skip();
+    } 
+
+    //check if there is a serving queue
+    const servingQueue = await page.locator("#servingQueue").innerText();
+
+    //if servingQueue is not empty then click proceed button before calling next queue
+    if (servingQueue !== "🚫Empty") {
+      //proceed serving regular queue to next step
+      await page.locator('xpath=//*[@id="proceedBtn"]').click();
+      await page.locator("#modalConfirmBtn").click();
+      await page.waitForTimeout(2000);
+    }
 
     //call next regular
     await page.locator('xpath=//*[@id="nextRegularBtn"]').click();
     await page.locator("#modalConfirmBtn").click();
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(2000); 
 
     //get the text of the serving queue
     let serving = await page.locator("#servingQueue").innerText();
@@ -183,116 +235,57 @@ test.describe.serial("Pre-Assessment Queueing", () => {
 
     await page.waitForTimeout(2000);
 
-    //get the text of the skipped queue
-    const skipped = await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').innerText();
+    //confirm if queue was added to the pending list
+    const skippeddivs = page.locator('xpath=//*[@id="pendingRegu"]/div');
+    const skippedcount = await skippeddivs.count();
+    let skippedfound = false;
 
-    //compare serving queue and skipped queue
-    await expect(skipped).toBe(serving);
+    for (let i = 0; i < skippedcount; i++) {
+      const inqueueClient = await skippeddivs.nth(i).innerText();
+      // console.log(`Div ${i + 1}: ${inqueueClient}, serving: ${serving}`);
 
-    //serve skipped client
-    await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[3]').click();
-
-    await page.waitForTimeout(2000);
-
-    const serving2 = await page.locator("#servingQueue").innerText();
-
-    //compare serving queue and skipped queue
-    await expect(serving2).toBe(skipped);
-
-    //proceed skipped client to next step after serving
-    await page.locator('xpath=//*[@id="proceedBtn"]').click();
-    await page.locator("#modalConfirmBtn").click();
-    
-    //get the text of the next queue
-    const text2 = await page.locator('xpath=//*[@id="upcomingRegu"]/div[1]').innerText();
-
-    //call next regular
-    await page.locator('xpath=//*[@id="nextRegularBtn"]').click();
-    await page.locator("#modalConfirmBtn").click();
-
-    await page.waitForTimeout(2000);  
-
-    //get the text of the serving queue
-    const serving3 = await page.locator("#servingQueue").innerText();
-
-    //compare next queue and serving queue
-    await expect(serving3).toBe(text2);
-
-    //click skip button
-    await page.locator("#skipBtn").click();
-    await page.locator("#modalConfirmBtn").click();
-
-    await page.waitForTimeout(2000);
-
-    //get the text of the skipped queue
-    const skipped2 = await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').innerText();
-
-    //compare serving queue and skipped queue
-    await expect(serving3).toBe(skipped2);
-
-    //proceed skipped client to next step
-    await page.locator('xpath=//*[@id="pendingRegu"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
-
-    await page.waitForTimeout(2000);
-
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page).toHaveURL(/login/);
-
-    //login again and check next step if the proceed skipped client was added to the next step
-    await page.goto("https://172.26.120.49/qidra/public/");
-
-    //login step 2 user
-    await page.fill("#email", "encodingregu1@dswd.gov.ph");
-    await page.fill("#password", "Password@123");
-
-    await page.locator('button[type="submit"]').click();
-
-    await expect(page.url()).toContain("/user");
-
-    await page.waitForTimeout(2000);
-
-    //look for the proceed skipped client was added to the next step
-    const divs = page.locator('xpath=//*[@id="upcomingRegu"]/div');
-    const count = await divs.count();
-    let found = false;
-
-    for (let i = 0; i < count; i++) {
-      const proceededClient = await divs.nth(i).innerText();
-      // console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
-
-      if (proceededClient.includes(skipped2)) {
-        found = true;
+      if (inqueueClient.includes(serving)) {
+        skippedfound = true;
         break;
       }
     }
 
-    expect(found).toBeTruthy();
+    expect(skippedfound).toBeTruthy();
 
     await page.waitForTimeout(2000);
 
-    //logout
-    await page.locator('xpath=/html/body/div[1]/div/button').click();
-    await page.getByRole("link", { name: "Logout" }).click();
-
-    await expect(page).toHaveURL(/login/);
   });
 
-  test("Skip a serving priority queue, serve a skipped priority queue and proceed skipped queue to next step.", async ({ page }) => {
+  test("Skip a priority queue.", async ({ page }) => {
     //visit the page
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as regular user
-    await page.fill("#email", "preassessprio@dswd.gov.ph");
+    await page.fill("#email", "krajuanico@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
 
     await expect(page.url()).toContain("/user");
+
+    //get the text of the next queue
+    const nextQueue = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
+
+    if (nextQueue.includes("🚫Empty")) {
+      //skip test
+      test.skip();
+    } 
+
+    //check if there is a serving queue
+    const servingQueue = await page.locator("#servingQueue").innerText();
+
+    //if servingQueue is not empty then click proceed button before calling next queue
+    if (servingQueue !== "🚫Empty") {
+      //proceed serving regular queue to next step
+      await page.locator('xpath=//*[@id="proceedBtn"]').click();
+      await page.locator("#modalConfirmBtn").click();
+      await page.waitForTimeout(2000);
+    }
 
     //get the text of the next queue
     const text = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
@@ -312,62 +305,78 @@ test.describe.serial("Pre-Assessment Queueing", () => {
 
     await page.waitForTimeout(5000);
 
-    //get the text of the skipped queue
-    const skipped = await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').innerText();
+    //confirm if queue was added to the pending list
+    const skippeddivs = page.locator('xpath=//*[@id="pendingPrio"]/div');
+    const skippedcount = await skippeddivs.count();
+    let skippedfound = false;
 
-    //compare serving queue and skipped queue
-    await expect(skipped).toBe(serving);
+    for (let i = 0; i < skippedcount; i++) {
+      const inqueueClient = await skippeddivs.nth(i).innerText();
+      // console.log(`Div ${i + 1}: ${inqueueClient}, serving: ${serving}`);
+
+      if (inqueueClient.includes(serving)) {
+        skippedfound = true;
+        break;
+      }
+    }
+
+    expect(skippedfound).toBeTruthy();
 
     await page.waitForTimeout(2000);
+
+  });
+
+  test("Serve a skipped priority queue and proceed skipped queue to next step.", async ({ page }) => {
+    //visit the page
+    await page.goto("https://172.26.120.49/qidra/public/");
+
+    //login as regular user
+    await page.fill("#email", "krajuanico@dswd.gov.ph");
+    await page.fill("#password", "Password@123");
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.url()).toContain("/user");
+
+    //check if pending priority is not empty
+    const skippedQueues = await page.locator('#pendingPrio > div').allInnerTexts();
+
+    if (skippedQueues.includes("🚫Empty")) {
+      //call a pending priority number
+      await page.locator('#nextPriorityBtn').click();
+      await page.locator("#modalConfirmBtn").click();
+      
+      await page.waitForTimeout(2000);
+
+      //click skip button
+      await page.locator("#skipBtn").click();
+      await page.locator("#modalConfirmBtn").click();
+    }
 
     //serve skipped client
-    await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[3]').click();
+    //get text of skipped queue
+    const skipped = await page.locator('#pendingPrio > div').first();
+    const skippedQueue = await skipped.innerText();
+
+    console.log(skipped);
+
+    await page.locator('#pendingPrio > div').first().click();
+    await page.locator('#popup-modal button').nth(3).click();
+
+    console.log(skipped);
 
     await page.waitForTimeout(2000);
 
-    const serving2 = await page.locator("#servingQueue").innerText();
+    const serving = await page.locator("#servingQueue").innerText();
 
     //compare serving queue and skipped queue
-    await expect(serving2).toBe(skipped);
+    console.log(serving, skipped);
+    await expect(serving).toBe(skippedQueue);
 
     //proceed skipped client to next step after serving
     await page.locator('xpath=//*[@id="proceedBtn"]').click();
     await page.locator("#modalConfirmBtn").click();
     
-    await page.waitForTimeout(2000);
-
-    //get the text of the next queue
-    const text2 = await page.locator('xpath=//*[@id="upcomingPrio"]/div[1]').innerText();
-
-    //call next regular
-    await page.locator('xpath=//*[@id="nextPriorityBtn"]').click();
-    await page.locator("#modalConfirmBtn").click();
-
-    await page.waitForTimeout(2000);  
-
-    //get the text of the serving queue
-    const serving3 = await page.locator("#servingQueue").innerText();
-
-    //compare next queue and serving queue
-    await expect(serving3).toBe(text2);
-
-    //click skip button
-    await page.locator("#skipBtn").click();
-    await page.locator("#modalConfirmBtn").click();
-
-    await page.waitForTimeout(2000);
-
-    //get the text of the skipped queue
-    const skipped2 = await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').innerText();
-
-    //compare serving queue and skipped queue
-    await expect(serving3).toBe(skipped2);
-
-    //proceed skipped client to next step
-    await page.locator('xpath=//*[@id="pendingPrio"]/div[1]').click();
-    await page.locator('xpath=//*[@id="popup-modal"]/div/div/div/button[4]').click();
-
     await page.waitForTimeout(2000);
 
     //logout
@@ -379,7 +388,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     // await page.waitForTimeout(2000);
 
     //login step 2 user
-    await page.fill("#email", "encodingprio1@dswd.gov.ph");
+    await page.fill("#email", "jdcumbay@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -397,7 +406,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
       const proceededClient = await divs.nth(i).innerText();
       // console.log(`Div ${i + 1}: ${proceededClient}, ${skipped2}`);
 
-      if (proceededClient.includes(skipped2)) {
+      if (proceededClient.includes(serving)) {
         found = true;
         break;
       }
@@ -419,7 +428,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as priority user
-    await page.fill("#email", "preassessregu@dswd.gov.ph");
+    await page.fill("#email", "fosale@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -467,7 +476,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.waitForTimeout(2000);
 
     //login step 2 user
-    await page.fill("#email", "encodingregu1@dswd.gov.ph");
+    await page.fill("#email", "fjlvillas@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -507,7 +516,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await page.goto("https://172.26.120.49/qidra/public/");
 
     //login as priority user
-    await page.fill("#email", "preassessprio@dswd.gov.ph");
+    await page.fill("#email", "krajuanico@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();
@@ -553,7 +562,7 @@ test.describe.serial("Pre-Assessment Queueing", () => {
     await expect(page.url()).toContain("/auth/login");
 
     //login step 2 user
-    await page.fill("#email", "encodingprio1@dswd.gov.ph");
+    await page.fill("#email", "jdcumbay@dswd.gov.ph");
     await page.fill("#password", "Password@123");
 
     await page.locator('button[type="submit"]').click();

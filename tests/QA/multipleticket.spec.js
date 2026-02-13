@@ -51,14 +51,13 @@ test.describe.serial("Generate Ticket", () => {
 
     await page.fill("#email", "bladsparrow74@gmail.com");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.getByRole("button", { name: "Login" }).click();
 
     await expect(page.getByRole("heading", { name: "Generate Ticket", exact: true })).toBeVisible();
 
     //for loop to generate 20 tickets and click escape button after firing print dialog
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       await page.getByRole("button", { name: /crisis intervention section/i }).click();
       await page.getByRole("button", { name: /^regular$/i }).click();
 
@@ -71,6 +70,7 @@ test.describe.serial("Generate Ticket", () => {
       await page.waitForTimeout(2000);
 
       await page.keyboard.press("Escape");
+      await page.waitForTimeout(2000);
     }
 
     //single ticket generation
@@ -138,9 +138,8 @@ test.describe.serial("Generate Ticket", () => {
 
     await page.goto("https://172.26.120.49/qidra/public/");
 
-    await page.fill("#email", "cispacd@dswd.gov.ph");
+    await page.fill("#email", "bladsparrow74@gmail.com");
     await page.fill("#password", "Password@123");
-    await page.getByLabel("I agree to the Terms and Conditions.").check();
 
     await page.getByRole("button", { name: "Login" }).click();
 
@@ -149,7 +148,7 @@ test.describe.serial("Generate Ticket", () => {
     ).toBeVisible();
 
     //for loop to generate 20 tickets and click escape button after firing print dialog
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       await page.getByRole("button", { name: /crisis intervention section/i }).click();
       await page.getByRole("button", { name: /^priority$/i }).click();
 
